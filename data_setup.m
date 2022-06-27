@@ -15,7 +15,7 @@ Y = X(:,7);
 X(:,7) = [];
 [N,M] = size(X);
 
-itr = 5;
+itr = 50;
 J = zeros(1,itr);
 predict = zeros(1,N);
 %weights
@@ -35,13 +35,13 @@ y = Y(a(k));
 a_0 = x; %Input layer
     
 z_1 = w_1*a_0;  %hidden layer 01
-a_1 = tanH(z_1);
+a_1 = sigmoidFunction(z_1);
 
 z_2 = w_2*a_1;  %hidden layer 02
-a_2 = tanH(z_2);
+a_2 = sigmoidFunction(z_2);
 
 z_3 = w_3*a_2  %hidden layer 04
-a_3 = tanH(z_3);
+a_3 = sigmoidFunction(z_3);
 
 predict(1,k) = a_3;
 
@@ -49,22 +49,22 @@ predict(1,k) = a_3;
 %output error
 delta_3 = a_3 - y;
 %Gradient of the output layer
-grad_3 = delta_3;
+grad_3 = delta_3*a_2';
 
 %hidden layer 2 error
-delta_2 = w_3' * delta_3 .* (1 - (a_2.^2));
+delta_2 = w_3' * delta_3 .* a_2.*(1-a_2);
 %Gradient of the hidden layer 3
 grad_2 = delta_2*a_1';
 
 %hidden layer 1 error
-delta_1 = w_2' * delta_2 .* (1 - (a_1.^2));
+delta_1 = w_2'*delta_2.*a_1.*(1-a_1);
 %Gradient of the hidden layer 1
 grad_1 = delta_1*a_0';
 
 %Updating weights
-w_1 = w_1 - 0.001.*grad_1;
-w_2 = w_2 - 0.001.*grad_2;
-w_3 = w_3 - 0.001.*grad_3;
+w_1 = w_1 - 0.005.*grad_1;
+w_2 = w_2 - 0.005.*grad_2;
+w_3 = w_3 - 0.005.*grad_3;
 
 end
   
