@@ -1,0 +1,94 @@
+clear all; close all; clc;
+
+%plot data forward
+filename = 'forward.csv';
+M_f = csvread(filename);
+time = M_f(:,1);
+
+ay = M_f(:,3); %linear y
+az = M_f(:,4); %linear z
+gx = M_f(:,5); %angular x
+gy = M_f(:,6); %angular y
+gz = M_f(:,7); %angular z
+
+%%%%%%%%%%% ax %%%%%%%%%%
+%data setup
+ax = M_f(:,2)'*10^3; %linear x
+[row,col] = size(ax);
+
+%moving average filter
+ax(1) = ax(1);
+ax(2) = (ax(1)+ax(2)+ax(3))/3;
+for i = 3:(col-3)
+ax(i) = (ax(i-2)+ax(i-1)+ax(i)+ax(i+1)+ax(i+2))/5;
+end
+ax(672) = (ax(671)+ax(672)+ax(673))/3;
+ax(673) = ax(673);
+
+%Impliment low pass filter
+ts = (10*10^-3); %time interval
+fs = 1/ts; %frequency
+lpFilt = designfilt('lowpassiir','FilterOrder',8,'PassbandFrequency',5,'PassbandRipple',0.2,'SampleRate',fs);
+ax = filter(lpFilt,ax);
+
+time = time - time(1);
+
+Ax = timeseries(ax,time');
+Ax.name = 'forward';
+Ax.TimeInfo.Units = 'milisecoends';
+plot(Ax);
+grid on;
+hold on;
+
+
+%%%%%%%%%%% ay %%%%%%%%%%
+%data setup
+ay = M_f(:,3)'*10^3; %linear x
+[row,col] = size(ay);
+
+%moving average filter
+ay(1) = ay(1);
+ay(2) = (ay(1)+ay(2)+ay(3))/3;
+for i = 3:(col-3)
+ay(i) = (ay(i-2)+ay(i-1)+ay(i)+ay(i+1)+ay(i+2))/5;
+end
+ay(672) = (ay(671)+ay(672)+ay(673))/3;
+ay(673) = ay(673);
+
+%Impliment low pass filter
+ts = (10*10^-3); %time interval
+fs = 1/ts; %frequency
+lpFilt = designfilt('lowpassiir','FilterOrder',8,'PassbandFrequency',5,'PassbandRipple',0.2,'SampleRate',fs);
+ay = filter(lpFilt,ay);
+
+Ay = timeseries(ay,time');
+Ay.name = 'forward';
+Ay.TimeInfo.Units = 'milisecoends';
+plot(Ay);
+grid on;
+
+%%%%%%%%%%% az %%%%%%%%%%
+%data setup
+az = M_f(:,2)'*10^3; %linear x
+[row,col] = size(az);
+
+%moving average filter
+az(1) = az(1);
+az(2) = (az(1)+az(2)+az(3))/3;
+for i = 3:(col-3)
+az(i) = (az(i-2)+az(i-1)+az(i)+az(i+1)+az(i+2))/5;
+end
+az(672) = (az(671)+az(672)+az(673))/3;
+az(673) = az(673);
+
+%Impliment low pass filter
+ts = (10*10^-3); %time interval
+fs = 1/ts; %frequency
+lpFilt = designfilt('lowpassiir','FilterOrder',8,'PassbandFrequency',5,'PassbandRipple',0.2,'SampleRate',fs);
+az = filter(lpFilt,az);
+
+Az.name = 'forward';
+Az.TimeInfo.Units = 'milisecoends';
+Az = timeseries(az,time');
+plot(Az);
+grid on;
